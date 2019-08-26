@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <style type="text/css">
+        body,html,#container {
+        width: 100%;
+        height: 700px;
+        margin: 0px
+        }
+    </style>
+    <title>AMAP Map test</title>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="text/javascript">
+        window.init = function(){
+            var map = new AMap.Map('container', {
+               resizeEnable: true,
+               center:[116.46,39.92],
+               zoom:12
+            });
+            if (location.href.indexOf('guide=1') !== -1) {
+                map.setStatus({scrollWheel: false});
+                map.plugin(["AMap.ToolBar"], function() {
+                  map.addControl(new AMap.ToolBar({liteStyle:true}))
+                });
+            };
+
+            // 路径
+            var path = {{ path }}; //简写
+            var polyline = new AMap.Polyline({
+                path : path,
+            });
+            map.add(polyline);
+
+            {% for point in points %}
+                var marker = new AMap.Marker({
+                    position: {{ point }},
+                    title: '{{ username }}'
+                })
+                map.add(marker)
+            {% endfor %}
+
+          }
+    </script>
+    <script src="https://webapi.amap.com/maps?v=1.4.15&key={{ ACCESS_KEY }}&callback=init"></script>
+</body>
+</html>
