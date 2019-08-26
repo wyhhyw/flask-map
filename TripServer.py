@@ -1,24 +1,6 @@
-from flask import Flask, request, session, g, redirect, \
-    url_for, abort, render_template, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-
-app = Flask(__name__)
-app.config.from_envvar('APP_CONFIG_FILE', silent=True)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-# AMAP_ACCESS_KEY=app.config['AMAP_ACCESS_KEY']
-
-
-class POI(db.Model):
-    poiId = db.Column(db.Integer, primary_key=True)
-    poiName = db.Column(db.String(120), index=True, unique=True)
-    poiLat = db.Column(db.Float)
-    poiLng = db.Column(db.Float)
-
-    def __repr__(self):
-        return '<POI {}: [{}, {}]>'.format(self.poiName, self.poiLat, self.poiLng)
+from flask import render_template
+from config import Config
+from main import app
 
 
 @app.route('/')
@@ -28,7 +10,8 @@ def hello_world():
 
 @app.route('/base')
 def base():
-    return render_template('base.html', ACCESS_KEY=AMAP_ACCESS_KEY)
+    return render_template('base.html',
+                           ACCESS_KEY=Config.AMAP_ACCESS_KEY)
 
 
 @app.route('/mapTest')
@@ -86,7 +69,8 @@ def mapTest():
         '天通苑'
     ]
     points = path
-    return render_template('mapTest.html', ACCESS_KEY=AMAP_ACCESS_KEY, username=username, path=path, points=points)
-
-if __name__ == '__main__':
-    app.run()
+    return render_template('mapTest.html',
+                           ACCESS_KEY=Config.AMAP_ACCESS_KEY,
+                           username=username,
+                           path=path,
+                           points=points)
